@@ -76,7 +76,7 @@ class AttnDecoderRNN(nn.Module):
 
         # Compute context vector.
         if i == 0:
-            context = torch.mean(encoder_outputs, dim=1, keepdim=True)
+            context = torch.mean(encoder_outputs, dim=0, keepdim=True)
             
             # Compute gru output.
             gru_input = torch.cat((last_palette, context.squeeze(0)), 1)
