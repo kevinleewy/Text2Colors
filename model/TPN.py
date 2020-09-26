@@ -84,7 +84,7 @@ class AttnDecoderRNN(nn.Module):
             # Generate palette color.
             #palette = self.out(gru_hidden.squeeze(0))
             palette = self.out(gru_hidden.squeeze(1))
-            return palette, context.unsqueeze(0), gru_hidden#, attn_weights
+            return palette, context.unsqueeze(0), gru_hidden, _
 
         else:
             attn_weights = self.attn(last_decoder_hidden.squeeze(0), encoder_outputs, each_input_size)
@@ -97,7 +97,7 @@ class AttnDecoderRNN(nn.Module):
             # Generate palette color.
             #palette = self.out(gru_hidden.squeeze(0))
             palette = self.out(gru_hidden.squeeze(1))
-            return palette, context.unsqueeze(0), gru_hidden#, attn_weights
+            return palette, context.unsqueeze(0), gru_hidden, attn_weights
 
 
 class Attn(nn.Module):
