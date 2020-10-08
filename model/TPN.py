@@ -3,6 +3,8 @@ import torch.nn as nn
 from random import *
 from util import *
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 class CA_NET(nn.Module):
 
     def __init__(self):
@@ -20,7 +22,8 @@ class CA_NET(nn.Module):
 
     def reparametrize(self, mu, logvar):
         std = logvar.mul(0.5).exp_()
-        eps = torch.cuda.FloatTensor(std.size()).normal_(0.0, 1)
+        # eps = torch.cuda.FloatTensor(std.size()).normal_(0.0, 1)
+        eps = torch.FloatTensor(std.size()).normal_(0.0, 1).to(device)
         return eps * std + mu
 
     def forward(self, text_embedding):
@@ -47,7 +50,7 @@ class EncoderRNN(nn.Module):
 
         return c_code, hidden, mu, logvar
 
-    def init_hidden(self,batch_size):
+    def init_hidden(self, batch_size):
         hidden = torch.zeros(self.n_layers, batch_size, self.hidden_size)
 
         return hidden
@@ -87,7 +90,11 @@ class AttnDecoderRNN(nn.Module):
             return palette, context.unsqueeze(0), gru_hidden, None
 
         else:
+            
+            # Calculate alpha (Equation 9 and 10 in paper)
             attn_weights = self.attn(last_decoder_hidden.squeeze(0), encoder_outputs, each_input_size)
+            
+            # Calculate context vector (Equation 8 in paper)
             context = torch.bmm(attn_weights, encoder_outputs.transpose(0,1))
 
             # Compute gru output.
@@ -113,7 +120,7 @@ class Attn(nn.Module):
     def forward(self, hidden, encoder_outputs, each_size):
         seq_len = encoder_outputs.size(0)
         batch_size = encoder_outputs.size(1)
-        attn_energies = torch.zeros(seq_len,batch_size,1).cuda()
+        attn_energies = torch.zeros(seq_len,batch_size,1).to(device)
 
         for i in range(seq_len):
             attn_energies[i] = self.score(hidden, encoder_outputs[i])

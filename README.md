@@ -85,7 +85,7 @@ $ python main.py --mode train_PCN
 ##### (i) Testing TPN
 
 ```bash
-$ python main.py --mode test_TPN
+$ python main.py --mode test_TPN --resume_epoch 500
 ```
 
 ##### (ii) Testing Text2Colors
@@ -93,6 +93,20 @@ $ python main.py --mode test_TPN
 ```bash
 $ python main.py --mode test_text2colors
 ```
+
+#### 5. Run Server API
+##### (i) Install requirements
+
+```bash
+$ pip install -r requirements.txt
+```
+
+##### (ii) Testing Text2Colors
+
+```bash
+$ python server.py
+```
+
 
 ## Citation
 If this work is useful for your research, please cite our [paper](https://arxiv.org/abs/1804.04128).
